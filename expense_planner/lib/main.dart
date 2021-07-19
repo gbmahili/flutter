@@ -111,6 +111,34 @@ class _MyHomePageState extends State<MyHomePage> {
           Chart(_recentTransactions),
           // UserTransaction()
           TransactionList(_userTransactions.toList()),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Container(
+                height: 100,
+                child: Text('Item 1 - pretty big!'),
+                color: Colors.red,
+              ),
+              Flexible(
+                flex: 5,
+                fit: FlexFit.tight,
+                child: Container(
+                  height: 100,
+                  child: Text('Item 2'),
+                  color: Colors.blue,
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                // fit: FlexFit.tight,
+                child: Container(
+                  height: 100,
+                  child: Text('Item 3'),
+                  color: Colors.orange,
+                ),
+              ),
+            ],
+          )
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
