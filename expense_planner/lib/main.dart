@@ -4,7 +4,6 @@ import 'package:expense_planner/widgets/new_transaction.dart';
 import 'package:expense_planner/widgets/transaction_list.dart';
 // import 'package:expense_planner/widgets/user_transaction.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 void main() {
   runApp(MyApp());
@@ -20,11 +19,15 @@ class MyApp extends StatelessWidget {
         accentColor: Colors.amberAccent,
         fontFamily: 'Quicksand', // For the whole app.
         textTheme: ThemeData.light().textTheme.copyWith(
-                headline6: TextStyle(
-              fontFamily: 'OpenSans',
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            )),
+              headline6: TextStyle(
+                fontFamily: 'OpenSans',
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+              button: TextStyle(
+                color: Colors.white,
+              ),
+            ),
         appBarTheme: AppBarTheme(
           textTheme: ThemeData.light().textTheme.copyWith(
                 // headeline6 is for the app bar title.
@@ -73,12 +76,13 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
-  void _addNewTransaction(String txTitle, double txAmount) {
+  void _addNewTransaction(String txTitle, double txAmount, DateTime txDate) {
     final newTx = Transaction(
-        title: txTitle,
-        amount: txAmount,
-        date: DateTime.now(),
-        id: DateTime.now().toString());
+      title: txTitle,
+      amount: txAmount,
+      date: txDate,
+      id: DateTime.now().toString(),
+    );
     setState(() {
       _userTransactions.add(newTx);
     });
