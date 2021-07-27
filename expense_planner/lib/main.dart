@@ -4,8 +4,16 @@ import 'package:expense_planner/widgets/new_transaction.dart';
 import 'package:expense_planner/widgets/transaction_list.dart';
 // import 'package:expense_planner/widgets/user_transaction.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() {
+  // Restrict app to Landscape orientation or Portrait orientation.
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitDown,
+  //   DeviceOrientation.portraitUp,
+  // ]);
+
   runApp(MyApp());
 }
 
@@ -13,6 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Expense Planner',
       theme: ThemeData(
         primarySwatch: Colors.teal,
@@ -55,6 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
   // final amountController = TextEditingController();
 
   final List<Transaction> _userTransactions = [];
+  bool _showChart = false;
 
   List<Transaction> get _recentTransactions {
     return _userTransactions.where((tx) {
@@ -93,23 +103,70 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    final PreferredSizeWidget appBar = AppBar(
+      title: Text('Expense Planner'),
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.add),
+          onPressed: () => _startAddNewTransaction(context),
+        ),
+      ],
+    );
+    String showHideText = _showChart ? 'Hide Chart' : 'Show Chart';
+
+    final _transactionListWidget = Container(
+      height: (MediaQuery.of(context).size.height -
+              appBar.preferredSize.height -
+              MediaQuery.of(context).padding.top) *
+          0.7,
+      child: TransactionList(_userTransactions.toList(), _deleteTransaction),
+    );
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Expense Planner'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () => _startAddNewTransaction(context),
-          ),
-        ],
-      ),
+      appBar: appBar,
       body: Column(
         // mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Chart(_recentTransactions),
-          // UserTransaction()
-          TransactionList(_userTransactions.toList(), _deleteTransaction),
+          if (isLandscape) // this is a shorthand for if isLandscape. No need for else.
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(showHideText),
+                SizedBox(
+                  height: 10,
+                ),
+                Switch(
+                  value: _showChart,
+                  onChanged: (value) {
+                    setState(() {
+                      _showChart = value;
+                    });
+                  },
+                )
+              ],
+            ),
+          if (!isLandscape)
+            Container(
+              height: (MediaQuery.of(context).size.height -
+                      appBar.preferredSize.height -
+                      MediaQuery.of(context).padding.top) *
+                  0.3,
+              child: Chart(_recentTransactions),
+            ),
+          if (!isLandscape) _transactionListWidget,
+          if (isLandscape)
+            _showChart
+                ? Container(
+                    height: (MediaQuery.of(context).size.height -
+                            appBar.preferredSize.height -
+                            MediaQuery.of(context).padding.top) *
+                        0.7,
+                    child: Chart(_recentTransactions),
+                  )
+                : _transactionListWidget,
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
