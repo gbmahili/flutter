@@ -52,15 +52,32 @@ class TransactionList extends StatelessWidget {
                   subtitle: Text(
                     DateFormat.yMMMMd().format(transactions[index].date),
                   ),
-                  trailing: IconButton(
-                    icon: Icon(
-                      Icons.delete,
-                      color: Theme.of(context).errorColor,
-                    ),
-                    onPressed: () {
-                      deleteTransaction(transactions[index].id);
-                    },
-                  ),
+                  trailing: MediaQuery.of(context).size.width >
+                          360 // if device width is more than 360, show delete button else show Delete button with text
+                      ? TextButton.icon(
+                          label: Text(
+                            'Delete',
+                            style: TextStyle(
+                              color: Theme.of(context).errorColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          icon: Icon(
+                            Icons.delete,
+                            color: Theme.of(context).errorColor,
+                          ),
+                          onPressed: () =>
+                              deleteTransaction(transactions[index].id),
+                        )
+                      : IconButton(
+                          icon: Icon(
+                            Icons.delete,
+                            color: Theme.of(context).errorColor,
+                          ),
+                          onPressed: () {
+                            deleteTransaction(transactions[index].id);
+                          },
+                        ),
 
                   //   Card(
                   //   child: Row(
