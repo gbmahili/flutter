@@ -1,10 +1,12 @@
+import "dart:io";
 import 'package:expense_planner/models/transactions.dart';
 import 'package:expense_planner/widgets/chart.dart';
 import 'package:expense_planner/widgets/new_transaction.dart';
 import 'package:expense_planner/widgets/transaction_list.dart';
-// import 'package:expense_planner/widgets/user_transaction.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+// import 'package:expense_planner/widgets/user_transaction.dart';
+// import 'package:flutter/services.dart';
 
 void main() {
   // Restrict app to Landscape orientation or Portrait orientation.
@@ -32,6 +34,11 @@ class MyApp extends StatelessWidget {
                 fontFamily: 'OpenSans',
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
+              ),
+              headline5: TextStyle(
+                fontFamily: 'OpenSans',
+                fontWeight: FontWeight.normal,
+                fontSize: 14,
               ),
               button: TextStyle(
                 color: Colors.white,
@@ -106,18 +113,34 @@ class _MyHomePageState extends State<MyHomePage> {
     final mediaQuery = MediaQuery.of(context);
     final bool isLandscape = mediaQuery.orientation == Orientation.landscape;
     // PreferredSize is something available in the Material widget and can get the size of the appBar
-    final PreferredSizeWidget appBar = AppBar(
-      title: Text('Expense Planner'),
-      actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.add),
-          onPressed: () => _startAddNewTransaction(context),
-        ),
-      ],
-    );
+    dynamic appBar = Platform.isIOS
+        ? CupertinoNavigationBar(
+            middle: Text('Expense Planner'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize
+                  .min, // take the minimum size it can take, otherwise, it takes the full width and hides the title
+              children: [
+                GestureDetector(
+                  child: Icon(
+                    CupertinoIcons.add,
+                  ),
+                  onTap: () => _startAddNewTransaction(context),
+                )
+              ],
+            ),
+          )
+        : AppBar(
+            title: Text('Expense Planner'),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () => _startAddNewTransaction(context),
+              ),
+            ],
+          );
     String showHideText = _showChart ? 'Hide Chart' : 'Show Chart';
 
-    final _transactionListWidget = Container(
+    final Widget _transactionListWidget = Container(
       height: (mediaQuery.size.height -
               appBar.preferredSize.height -
               mediaQuery.padding.top) *
@@ -125,9 +148,9 @@ class _MyHomePageState extends State<MyHomePage> {
       child: TransactionList(_userTransactions.toList(), _deleteTransaction),
     );
 
-    return Scaffold(
-      appBar: appBar,
-      body: Column(
+    final Widget pageBody = SafeArea(
+        child: SingleChildScrollView(
+      child: Column(
         // mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -135,12 +158,17 @@ class _MyHomePageState extends State<MyHomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(showHideText),
+                Text(
+                  showHideText,
+                  style: Theme.of(context).textTheme.headline5,
+                ),
                 SizedBox(
                   height: 10,
                 ),
-                Switch(
+                Switch.adaptive(
+                  // adaptive makes the switch look different on IOS and Android
                   value: _showChart,
+                  activeColor: Theme.of(context).accentColor,
                   onChanged: (value) {
                     setState(() {
                       _showChart = value;
@@ -170,11 +198,24 @@ class _MyHomePageState extends State<MyHomePage> {
                 : _transactionListWidget,
         ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () => _startAddNewTransaction(context),
-      ),
-    );
+    ));
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            child: pageBody,
+            navigationBar: appBar,
+          )
+        : Scaffold(
+            appBar: appBar,
+            body: pageBody,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            // Platform is imported from dart:io to tell which platform we are on
+            floatingActionButton: Platform.isIOS
+                ? null
+                : FloatingActionButton(
+                    child: Icon(Icons.add),
+                    onPressed: () => _startAddNewTransaction(context),
+                  ),
+          );
   }
 }
