@@ -66,9 +66,41 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   // final titleController = TextEditingController();
   // final amountController = TextEditingController();
+
+  @override
+  void initState() {
+    // Ensure that we are watching for app changes first
+    WidgetsBinding.instance!.addObserver(this);
+    super.initState();
+  }
+
+  // This will watch if app is in which state, either active, inactive, paused, resumed or suspended.
+  // To use it, we add a Mixin called `WidgetsBindingObserver` to our class.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print(state);
+    if (state == AppLifecycleState.inactive) {
+      // This will be called when app is about to be closed or user is about to switch to another app.
+      print('---inactive');
+    } else if (state == AppLifecycleState.paused) {
+      // This will be called when app is in paused state (no longer seen on the screen).
+      print('---paused');
+    } else if (state == AppLifecycleState.resumed) {
+      // This will be called when app is in resumed state (when user can see the app again.
+      print('---resumed');
+    }
+    super.didChangeAppLifecycleState(state);
+  }
+
+  // Clear the observer to avoid memory leaks.
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.removeObserver(this);
+    super.dispose();
+  }
 
   final List<Transaction> _userTransactions = [];
   bool _showChart = false;
@@ -108,12 +140,8 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final bool isLandscape = mediaQuery.orientation == Orientation.landscape;
-    // PreferredSize is something available in the Material widget and can get the size of the appBar
-    dynamic appBar = Platform.isIOS
+  Widget _buildAppBar() {
+    return Platform.isIOS
         ? CupertinoNavigationBar(
             middle: Text('Expense Planner'),
             trailing: Row(
@@ -138,6 +166,14 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ],
           );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final bool isLandscape = mediaQuery.orientation == Orientation.landscape;
+    // PreferredSize is something available in the Material widget and can get the size of the appBar
+    dynamic appBar = _buildAppBar();
     String showHideText = _showChart ? 'Hide Chart' : 'Show Chart';
 
     final Widget _transactionListWidget = Container(
@@ -199,6 +235,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
     ));
+
     return Platform.isIOS
         ? CupertinoPageScaffold(
             child: pageBody,
@@ -213,7 +250,7 @@ class _MyHomePageState extends State<MyHomePage> {
             floatingActionButton: Platform.isIOS
                 ? null
                 : FloatingActionButton(
-                    child: Icon(Icons.add),
+                    child: const Icon(Icons.add),
                     onPressed: () => _startAddNewTransaction(context),
                   ),
           );
