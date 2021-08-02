@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:meals/categories_screen.dart';
+import 'package:meals/category_meals_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -8,23 +10,55 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Mahili Meals',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        accentColor: Colors.blueAccent,
+        canvasColor: Color.fromRGBO(255, 254, 229, 1),
+        fontFamily: 'Railway',
+        textTheme: ThemeData.light().textTheme.copyWith(
+            bodyText1: TextStyle(
+              color: Color.fromRGBO(20, 51, 51, 1),
+            ),
+            bodyText2: TextStyle(
+              color: Color.fromRGBO(20, 51, 51, 1),
+            ),
+            // for the title
+            headline6: TextStyle(
+              fontSize: 20.0,
+              fontFamily: 'RobotoCondensed',
+              fontWeight: FontWeight.bold,
+            )),
       ),
-      home: MyHomePage(),
+      // home: CategoriesScreen(),
+      initialRoute: "/",
+      routes: {
+        '/': (contextt) => CategoriesScreen(),
+        // '/category-meals': (context) => CategoryMealsScreen(),
+        // the routeName is a string that was created on top of the CategoryMealsScreen widget
+        // so that we can always refer to it whenever we need to navigatte to that screen, this
+        // is a good practice to follow so that you don't forget to update the routeName when
+        // you update the screen
+        CategoryMealsScreen.routeName: (context) => CategoryMealsScreen(),
+      },
     );
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
 
+class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scafold(
-      body: Center(
-        child: Text('Navigation time');
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Mahili Meals'),
       ),
+      body: Text('Navigation time'),
     );
   }
 }
