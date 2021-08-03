@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meals/screens/categories_screen.dart';
 import 'package:meals/screens/category_meals_screen.dart';
 import 'package:meals/screens/meal_detail_screen.dart';
+import 'package:meals/screens/tabs_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -35,7 +36,8 @@ class MyApp extends StatelessWidget {
       // home: CategoriesScreen(),
       initialRoute: "/",
       routes: {
-        '/': (contextt) => CategoriesScreen(),
+        // '/': (contextt) => CategoriesScreen(),
+        '/': (contextt) => TabsScreen(),
         // '/category-meals': (context) => CategoryMealsScreen(),
         // the routeName is a string that was created on top of the CategoryMealsScreen widget
         // so that we can always refer to it whenever we need to navigatte to that screen, this
