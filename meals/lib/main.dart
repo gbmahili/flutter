@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meals/screens/categories_screen.dart';
 import 'package:meals/screens/category_meals_screen.dart';
+import 'package:meals/screens/meal_detail_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -41,7 +42,31 @@ class MyApp extends StatelessWidget {
         // is a good practice to follow so that you don't forget to update the routeName when
         // you update the screen
         CategoryMealsScreen.routeName: (context) => CategoryMealsScreen(),
+        MealDetailScreen.routeName: (context) => MealDetailScreen(),
       },
+      // On generateRoute is used catch any error if we try to navigate
+      // to a route that doesn't exist (not registered)
+      // You pass in a route to which it will go if the route doesn't exist
+      onGenerateRoute: (settings) {
+        print(settings
+            .arguments); // use this settings to do other things if route not found
+        return MaterialPageRoute(
+            builder: (context) =>
+                CategoriesScreen()); // navigate to another route
+      },
+      // this is used in case Flutter can't find a route or nothing is defined...
+      // this is the last resort and if it fails, it will crash the app
+      // You can show a page that says "404" or "Something went wrong" screen
+      onUnknownRoute: (settings) {
+        print(settings
+            .arguments); // use this settings to do other things if route not found
+        return MaterialPageRoute(
+            builder: (context) =>
+                CategoriesScreen()); // navigate to another route
+      },
+      // The difference between onGenerateRoute and onUnknownRoute is that, onGenerateRoute executes for any
+      // unregistered route, whereas onUnknownRoute executes if onGenerateRoute isn't defined or doesn't return a valid
+      // navigation action.
     );
   }
 }
