@@ -10,6 +10,7 @@ class MealItem extends StatelessWidget {
   final int duration;
   final Complexity complexity;
   final Affordability affordability;
+  final Function removeItem;
 
   const MealItem({
     required this.id,
@@ -18,6 +19,7 @@ class MealItem extends StatelessWidget {
     required this.duration,
     required this.complexity,
     required this.affordability,
+    required this.removeItem,
   });
 
   String get complexityText {
@@ -47,11 +49,18 @@ class MealItem extends StatelessWidget {
   }
 
   void _selectMeal(context) {
-    Navigator.of(context).pushNamed(
+    Navigator.of(context)
+        .pushNamed(
       MealDetailScreen.routeName,
       // You can also pass in one item to the argument, not a Map.
       arguments: id,
-    );
+    )
+        .then((result) {
+      // data received if a user comes back to a widget using .pop()
+      if (result != null) {
+        removeItem(result);
+      }
+    });
   }
 
   @override

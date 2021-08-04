@@ -85,6 +85,16 @@ class MealDetailScreen extends StatelessWidget {
                 itemCount: selectedMeal.steps.length,
               ),
             ),
+            FloatingActionButton(
+              onPressed: () {
+                // Go back (removes page from stack)
+                // pass in data, array, object, string, etc
+                // The data passed in pop will be recieved as a Future in the Navigator that pushed to this screen
+                // use the .then() method to get the data
+                Navigator.of(context).pop(mealId);
+              },
+              child: Icon(Icons.delete),
+            ),
           ],
         ),
       ),

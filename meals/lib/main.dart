@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meals/screens/categories_screen.dart';
 import 'package:meals/screens/category_meals_screen.dart';
+import 'package:meals/screens/filters_screen.dart';
 import 'package:meals/screens/meal_detail_screen.dart';
 import 'package:meals/screens/tabs_screen.dart';
 
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
         // you update the screen
         CategoryMealsScreen.routeName: (context) => CategoryMealsScreen(),
         MealDetailScreen.routeName: (context) => MealDetailScreen(),
+        FiltersCreen.routeName: (context) => FiltersCreen(),
       },
       // On generateRoute is used catch any error if we try to navigate
       // to a route that doesn't exist (not registered)

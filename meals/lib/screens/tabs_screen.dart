@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meals/screens/categories_screen.dart';
 import 'package:meals/screens/favorites_screen.dart';
+import 'package:meals/widgets/main_drawer.dart';
 
 class TabsScreen extends StatefulWidget {
   TabsScreen({Key? key}) : super(key: key);
@@ -32,9 +33,15 @@ class _TabsScreenState extends State<TabsScreen> {
   Widget build(BuildContext context) {
     // A comon way of adding tabs is to add a tab at the bottom of the screen
     return Scaffold(
+      // Top bar with title
       appBar: AppBar(
         title: Text(_pages[_selectedPageIndex]['title'] as String),
       ),
+
+      // Drawer to the left of the screen
+      drawer: MainDrawer(),
+
+      // Bottom tab with navigations
       bottomNavigationBar: BottomNavigationBar(
         onTap: _selectPage,
         backgroundColor: Theme.of(context).primaryColor,

@@ -1,28 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:meals/dummy_data.dart';
+import 'package:meals/models/meal.dart';
 import 'package:meals/widgets/meal_item.dart';
 
-class CategoryMealsScreen extends StatelessWidget {
+class CategoryMealsScreen extends StatefulWidget {
   // You can create the name of the route to which this widget will navigate to
   static const String routeName = '/category-meals';
-  // final String categoryId;
-  // final String categoryTitle;
 
-  // const CategoryMealsScreen(this.categoryId, this.categoryTitle);
+  @override
+  _CategoryMealsScreenState createState() => _CategoryMealsScreenState();
+}
+
+class _CategoryMealsScreenState extends State<CategoryMealsScreen> {
+  late String categoryTitle;
+  late List<Meal> displayedMeals;
+  bool _loadedData = false;
+  @override
+  void initState() {
+    super.initState();
+
+    // To extract arguments passed into the navigation (pushedNamed), use this
+    // final routeArgs =
+    //     ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+    // categoryTitle = routeArgs['title'] as String;
+    // final categortyId = routeArgs['id'];
+    // // Find the meals that match the category from the DUMMY_MEALS data
+    // displayedMeals = DUMMY_MEALS.where((meal) {
+    //   // categories is a list so we can use the contains method on a list to see if a list contains something
+    //   return meal.categories.contains(categortyId);
+    // }).toList();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_loadedData) {
+      // To extract arguments passed into the navigation (pushedNamed), use this
+      final routeArgs =
+          ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+      categoryTitle = routeArgs['title'] as String;
+      final categortyId = routeArgs['id'];
+      // Find the meals that match the category from the DUMMY_MEALS data
+      displayedMeals = DUMMY_MEALS.where((meal) {
+        // categories is a list so we can use the contains method on a list to see if a list contains something
+        return meal.categories.contains(categortyId);
+      }).toList();
+      _loadedData = true;
+    }
+  }
+
+  void _removeItem(id) {
+    print(id);
+    setState(() {
+      displayedMeals.removeWhere((meal) => meal.id == id);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    // To extract arguments passed into the navigation (pushedNamed), use this
-    final routeArgs =
-        ModalRoute.of(context)!.settings.arguments as Map<String, String>;
-    final String categoryTitle = routeArgs['title'] as String;
-    final categortyId = routeArgs['id'];
-
-    // Find the meals that match the category from the DUMMY_MEALS data
-    final categoryMeals = DUMMY_MEALS.where((meal) {
-      // categories is a list so we can use the contains method on a list to see if a list contains something
-      return meal.categories.contains(categortyId);
-    }).toList();
     return Scaffold(
       appBar: AppBar(
         title: Text(categoryTitle),
@@ -31,15 +66,16 @@ class CategoryMealsScreen extends StatelessWidget {
         child: ListView.builder(
             itemBuilder: (context, index) {
               return MealItem(
-                id: categoryMeals[index].id,
-                title: categoryMeals[index].title,
-                imageUrl: categoryMeals[index].imageUrl,
-                duration: categoryMeals[index].duration,
-                affordability: categoryMeals[index].affordability,
-                complexity: categoryMeals[index].complexity,
+                id: displayedMeals[index].id,
+                title: displayedMeals[index].title,
+                imageUrl: displayedMeals[index].imageUrl,
+                duration: displayedMeals[index].duration,
+                affordability: displayedMeals[index].affordability,
+                complexity: displayedMeals[index].complexity,
+                removeItem: _removeItem,
               );
             },
-            itemCount: categoryMeals.length),
+            itemCount: displayedMeals.length),
       ),
     );
   }
