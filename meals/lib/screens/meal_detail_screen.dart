@@ -33,7 +33,7 @@ class MealDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final mealId = ModalRoute.of(context)!.settings.arguments as String;
     final selectedMeal = DUMMY_MEALS.firstWhere((meal) => meal.id == mealId);
-    print(selectedMeal);
+
     // final id = routeArgs['id'] as String;
     return Scaffold(
       appBar: AppBar(

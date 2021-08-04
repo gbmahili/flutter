@@ -15,10 +15,15 @@ class _CategoryMealsScreenState extends State<CategoryMealsScreen> {
   late String categoryTitle;
   late List<Meal> displayedMeals;
   bool _loadedData = false;
+
   @override
   void initState() {
+    // print('calling --- initState()');
     super.initState();
 
+    // There is no context in initState, so we could have loaded the data here but we can use
+    // didChangeDependencies to load the data when the widget has been fully mounted
+    // .
     // To extract arguments passed into the navigation (pushedNamed), use this
     // final routeArgs =
     //     ModalRoute.of(context)!.settings.arguments as Map<String, String>;
@@ -33,6 +38,7 @@ class _CategoryMealsScreenState extends State<CategoryMealsScreen> {
 
   @override
   void didChangeDependencies() {
+    // print('calling --- didChangeDependencies()');
     super.didChangeDependencies();
     if (!_loadedData) {
       // To extract arguments passed into the navigation (pushedNamed), use this
@@ -50,7 +56,6 @@ class _CategoryMealsScreenState extends State<CategoryMealsScreen> {
   }
 
   void _removeItem(id) {
-    print(id);
     setState(() {
       displayedMeals.removeWhere((meal) => meal.id == id);
     });
