@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:meals/dummy_data.dart';
+import 'package:meals/models/meal.dart';
 import 'package:meals/screens/categories_screen.dart';
 import 'package:meals/screens/category_meals_screen.dart';
 import 'package:meals/screens/filters_screen.dart';
@@ -9,7 +11,44 @@ void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Map<String, bool> _filters = {
+    'gluten': false,
+    'lactose': false,
+    'vegan': false,
+    'vegetarian': false,
+  };
+
+  List<Meal> _availableMeals = DUMMY_MEALS;
+
+  void _setFilters(Map<String, bool> filterData) {
+    // print(filterData);
+    setState(() {
+      _filters = filterData;
+      _availableMeals = DUMMY_MEALS.where((meal) {
+        // print({'message': 'meal', 'val': meal.isVegan});
+        if (_filters['gluten'] == true && !meal.isGlutenFree) {
+          return false;
+        }
+        if (_filters['lactose'] == true && !meal.isLactoseFree) {
+          return false;
+        }
+        if (_filters['vegan'] == true && !meal.isVegan) {
+          return false;
+        }
+        if (_filters['vegetarian'] == true && !meal.isVegetarian) {
+          return false;
+        }
+        return true;
+      }).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -44,9 +83,11 @@ class MyApp extends StatelessWidget {
         // so that we can always refer to it whenever we need to navigatte to that screen, this
         // is a good practice to follow so that you don't forget to update the routeName when
         // you update the screen
-        CategoryMealsScreen.routeName: (context) => CategoryMealsScreen(),
+        CategoryMealsScreen.routeName: (context) =>
+            CategoryMealsScreen(_availableMeals),
         MealDetailScreen.routeName: (context) => MealDetailScreen(),
-        FiltersCreen.routeName: (context) => FiltersCreen(),
+        FiltersCreen.routeName: (context) =>
+            FiltersCreen(_filters, _setFilters),
       },
       // On generateRoute is used catch any error if we try to navigate
       // to a route that doesn't exist (not registered)

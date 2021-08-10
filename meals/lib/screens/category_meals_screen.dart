@@ -4,9 +4,10 @@ import 'package:meals/models/meal.dart';
 import 'package:meals/widgets/meal_item.dart';
 
 class CategoryMealsScreen extends StatefulWidget {
+  final List<Meal> _availableMeals;
   // You can create the name of the route to which this widget will navigate to
   static const String routeName = '/category-meals';
-
+  CategoryMealsScreen(this._availableMeals);
   @override
   _CategoryMealsScreenState createState() => _CategoryMealsScreenState();
 }
@@ -47,7 +48,7 @@ class _CategoryMealsScreenState extends State<CategoryMealsScreen> {
       categoryTitle = routeArgs['title'] as String;
       final categortyId = routeArgs['id'];
       // Find the meals that match the category from the DUMMY_MEALS data
-      displayedMeals = DUMMY_MEALS.where((meal) {
+      displayedMeals = widget._availableMeals.where((meal) {
         // categories is a list so we can use the contains method on a list to see if a list contains something
         return meal.categories.contains(categortyId);
       }).toList();
