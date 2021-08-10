@@ -3,7 +3,9 @@ import 'package:meals/dummy_data.dart';
 
 class MealDetailScreen extends StatelessWidget {
   static const String routeName = '/meal-detail';
-  const MealDetailScreen({Key? key}) : super(key: key);
+  final Function toggleFavorite;
+  final Function isFavorite;
+  const MealDetailScreen(this.toggleFavorite, this.isFavorite);
 
   Widget _buildSectionTitle(BuildContext context, String title) {
     return Container(
@@ -86,15 +88,19 @@ class MealDetailScreen extends StatelessWidget {
               ),
             ),
             FloatingActionButton(
-              onPressed: () {
-                // Go back (removes page from stack)
-                // pass in data, array, object, string, etc
-                // The data passed in pop will be recieved as a Future in the Navigator that pushed to this screen
-                // use the .then() method to get the data
-                Navigator.of(context).pop(mealId);
-              },
-              child: Icon(Icons.delete),
+              onPressed: () => toggleFavorite(mealId),
+              child: Icon(isFavorite(mealId) ? Icons.star : Icons.star_border),
             ),
+            // FloatingActionButton(
+            //   onPressed: () {
+            //     // Go back (removes page from stack)
+            //     // pass in data, array, object, string, etc
+            //     // The data passed in pop will be recieved as a Future in the Navigator that pushed to this screen
+            //     // use the .then() method to get the data
+            //     Navigator.of(context).pop(mealId);
+            //   },
+            //   child: Icon(Icons.delete),
+            // ),
           ],
         ),
       ),

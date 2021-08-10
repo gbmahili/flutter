@@ -25,6 +25,7 @@ class _MyAppState extends State<MyApp> {
   };
 
   List<Meal> _availableMeals = DUMMY_MEALS;
+  List<Meal> _favoriteMeals = [];
 
   void _setFilters(Map<String, bool> filterData) {
     // print(filterData);
@@ -47,6 +48,32 @@ class _MyAppState extends State<MyApp> {
         return true;
       }).toList();
     });
+  }
+
+  void _toggleFavorite(String mealId) {
+    // Get the index of a meal using their id from the list
+    final existingIndex = _favoriteMeals.indexWhere((meal) {
+      return meal.id == mealId;
+    });
+
+    // If it was there, index will be from 0 going up,
+    // so remove element at that index
+    if (existingIndex > -1) {
+      setState(() {
+        // Remove since it exists
+        _favoriteMeals.removeAt(existingIndex);
+      });
+    } else {
+      setState(() {
+        // Remove since it does not exists
+        _favoriteMeals.add(DUMMY_MEALS.firstWhere((meal) => meal.id == mealId));
+      });
+    }
+  }
+
+// returns true if any meal id is found is in the list of favorites
+  bool isMealFavorited(String mealId) {
+    return _favoriteMeals.any((meal) => meal.id == mealId);
   }
 
   @override
@@ -77,7 +104,7 @@ class _MyAppState extends State<MyApp> {
       initialRoute: "/",
       routes: {
         // '/': (contextt) => CategoriesScreen(),
-        '/': (contextt) => TabsScreen(),
+        '/': (contextt) => TabsScreen(_favoriteMeals),
         // '/category-meals': (context) => CategoryMealsScreen(),
         // the routeName is a string that was created on top of the CategoryMealsScreen widget
         // so that we can always refer to it whenever we need to navigatte to that screen, this
@@ -85,7 +112,8 @@ class _MyAppState extends State<MyApp> {
         // you update the screen
         CategoryMealsScreen.routeName: (context) =>
             CategoryMealsScreen(_availableMeals),
-        MealDetailScreen.routeName: (context) => MealDetailScreen(),
+        MealDetailScreen.routeName: (context) =>
+            MealDetailScreen(_toggleFavorite, isMealFavorited),
         FiltersCreen.routeName: (context) =>
             FiltersCreen(_filters, _setFilters),
       },
