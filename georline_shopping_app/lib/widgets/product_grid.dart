@@ -25,11 +25,15 @@ class ProductGrid extends StatelessWidget {
       ),
       itemCount: products.length,
       itemBuilder: (context, index) {
-        return ProductItem(
-          products[index].id,
-          products[index].title,
-          products[index].imageUrl,
-          products[index].price,
+        return ChangeNotifierProvider(
+          create: (context) => products[
+              index], // this products[index] is a class that can notify of changes
+          child: ProductItem(
+              // products[index].id,
+              // products[index].title,
+              // products[index].imageUrl,
+              // products[index].price,
+              ),
         );
       },
     );

@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:georline_shopping_app/providers/product.dart';
 import 'package:georline_shopping_app/screens/product_detail_screen.dart';
+import 'package:provider/provider.dart';
 
 class ProductItem extends StatelessWidget {
-  final String id;
-  final String title;
-  final String imageUrl;
-  final double price;
-  ProductItem(
-    this.id,
-    this.title,
-    this.imageUrl,
-    this.price,
-  );
+  // final String id;
+  // final String title;
+  // final String imageUrl;
+  // final double price;
+  // ProductItem(
+  //   this.id,
+  //   this.title,
+  //   this.imageUrl,
+  //   this.price,
+  // );
 
   @override
   Widget build(BuildContext context) {
+    final product = Provider.of<Product>(
+      context,
+      // if this is false, we can't see changes when we favorite the item, default is true, so we don't have to set it to true
+      listen:
+          false, // we set it to false so that the whole widget is not re-created when we faver the item, but we will use Consumer to see changes in the favorite
+    );
     return GestureDetector(
       onTap: () {
         // Navigator.of(context)
@@ -23,13 +31,13 @@ class ProductItem extends StatelessWidget {
         //   "title": title,
         // });
         Navigator.of(context)
-            .pushNamed(ProductDetailScreen.routeName, arguments: id);
+            .pushNamed(ProductDetailScreen.routeName, arguments: product.id);
       },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: GridTile(
           child: Image.network(
-            imageUrl,
+            product.imageUrl,
             fit: BoxFit.cover,
           ),
           // header: GridTileBar(
@@ -43,21 +51,26 @@ class ProductItem extends StatelessWidget {
             title: Column(
               children: [
                 Text(
-                  title,
+                  product.title,
                   textAlign: TextAlign.center,
                 ),
                 Text(
-                  "\$$price",
+                  "\$${product.price}",
                   textAlign: TextAlign.center,
                 ),
               ],
             ),
-            leading: IconButton(
-              icon: Icon(
-                Icons.favorite,
-                color: Theme.of(context).accentColor,
+            leading: Consumer<Product>(
+              // product is the same as product in the Provider.of(Product)
+              builder: (context, product, child) => IconButton(
+                icon: Icon(
+                  product.isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: Theme.of(context).accentColor,
+                ),
+                onPressed: () {
+                  product.toggleFavoriteStatus();
+                },
               ),
-              onPressed: () {},
             ),
             trailing: IconButton(
               icon: Icon(

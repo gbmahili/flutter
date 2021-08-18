@@ -13,8 +13,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Pass data to all the children of the app using ChangeNotifiedProvider
+    // return ChangeNotifierProvider.value(
     return ChangeNotifierProvider(
-      create: (context) => ProductsProvider(),
+      create: (context) =>
+          ProductsProvider(), // use this if not using ChangeNotifiedProvider.value and don't need the context
+      // value:
+      //     ProductsProvider(), // provide value if using ChangeNotifiedProvider.value
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'GeorLine Shopping',
