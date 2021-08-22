@@ -42,10 +42,29 @@ class ProductsProvider with ChangeNotifier {
     ),
   ];
 
+  // var _showFavoritesOnly = false;
+
   // We will return a copy of the items
   List<Product> get items {
+    // if (_showFavoritesOnly) {
+    //   return _items.where((p) => p.isFavorite).toList();
+    // }
     return [..._items];
   }
+
+  List<Product> get favoriteItems {
+    return _items.where((p) => p.isFavorite).toList();
+  }
+
+  // showFavorittesOnly() {
+  //   _showFavoritesOnly = true;
+  //   notifyListeners();
+  // }
+
+  // showAll() {
+  //   _showFavoritesOnly = false;
+  //   notifyListeners();
+  // }
 
   // Method to find a product by id
   Product findById(String id) {

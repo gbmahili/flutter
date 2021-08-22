@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:georline_shopping_app/widgets/product_item.dart';
 
 class ProductGrid extends StatelessWidget {
+  final bool showFavorites;
+  ProductGrid(this.showFavorites);
   @override
   Widget build(BuildContext context) {
     // This is how you access data from a state management
@@ -14,7 +16,8 @@ class ProductGrid extends StatelessWidget {
     // ChangeNotifierProvider (create: (context) => ProductsProvider(),child: MaterialApp())
     final productsData = Provider.of<ProductsProvider>(context);
     // Using the getter, we get the data (items) from the provider
-    final products = productsData.items;
+    final products =
+        showFavorites ? productsData.favoriteItems : productsData.items;
     return GridView.builder(
       padding: const EdgeInsets.all(10.0),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:georline_shopping_app/providers/cart.dart';
 import 'package:provider/provider.dart';
 
 import 'package:georline_shopping_app/providers/products_provider.dart';
@@ -14,11 +15,19 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // Pass data to all the children of the app using ChangeNotifiedProvider
     // return ChangeNotifierProvider.value(
-    return ChangeNotifierProvider(
-      create: (context) =>
-          ProductsProvider(), // use this if not using ChangeNotifiedProvider.value and don't need the context
-      // value:
-      //     ProductsProvider(), // provide value if using ChangeNotifiedProvider.value
+    return MultiProvider(
+      providers: [
+        // ChangeNotifierProvider.value(value: ProductsProvider()),
+        // ChangeNotifierProvider.value(value: Cart()),
+        ChangeNotifierProvider(create: (_) => ProductsProvider()),
+        ChangeNotifierProvider(create: (_) => Cart()),
+      ],
+      // return ChangeNotifierProvider.value(
+      //   // value: (context) =>
+      //   value:
+      //       ProductsProvider(), // use this if not using ChangeNotifiedProvider.value and don't need the context
+      //   // value:
+      //   //     ProductsProvider(), // provide value if using ChangeNotifiedProvider.value
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'GeorLine Shopping',

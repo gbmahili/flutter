@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:georline_shopping_app/providers/cart.dart';
 import 'package:georline_shopping_app/providers/product.dart';
 import 'package:georline_shopping_app/screens/product_detail_screen.dart';
 import 'package:provider/provider.dart';
@@ -23,6 +24,8 @@ class ProductItem extends StatelessWidget {
       listen:
           false, // we set it to false so that the whole widget is not re-created when we faver the item, but we will use Consumer to see changes in the favorite
     );
+
+    final Cart cart = Provider.of<Cart>(context);
     return GestureDetector(
       onTap: () {
         // Navigator.of(context)
@@ -30,8 +33,10 @@ class ProductItem extends StatelessWidget {
         //   "id": id,
         //   "title": title,
         // });
-        Navigator.of(context)
-            .pushNamed(ProductDetailScreen.routeName, arguments: product.id);
+        Navigator.of(context).pushNamed(
+          ProductDetailScreen.routeName,
+          arguments: product.id,
+        );
       },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
@@ -77,7 +82,9 @@ class ProductItem extends StatelessWidget {
                 Icons.shopping_cart,
                 color: Theme.of(context).accentColor,
               ),
-              onPressed: () {},
+              onPressed: () {
+                cart.addItem(product.id, product.title, product.price);
+              },
             ),
           ),
         ),
