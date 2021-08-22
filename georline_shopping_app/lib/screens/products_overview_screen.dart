@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:georline_shopping_app/providers/cart.dart';
+import 'package:georline_shopping_app/screens/cart_screen.dart';
 import 'package:georline_shopping_app/widgets/badge.dart';
 import 'package:georline_shopping_app/widgets/product_grid.dart';
 import 'package:provider/provider.dart';
@@ -56,7 +57,12 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                   as Widget, // this should have been the child but putting it out so it does not rebuild (performance)
               value: cart.itemCount.toString(),
             ),
-            child: Icon(Icons.shopping_cart),
+            child: IconButton(
+              icon: Icon(Icons.shopping_cart),
+              onPressed: () {
+                Navigator.of(context).pushNamed(CartScreen.routeName);
+              },
+            ),
           )
         ],
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:georline_shopping_app/providers/cart.dart';
+import 'package:georline_shopping_app/screens/cart_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'package:georline_shopping_app/providers/products_provider.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         home: ProductsOverviewScreen(),
         routes: {
           ProductDetailScreen.routeName: (context) => ProductDetailScreen(),
+          CartScreen.routeName: (context) => CartScreen(),
         },
       ),
     );
