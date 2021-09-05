@@ -84,4 +84,21 @@ class ProductsProvider with ChangeNotifier {
     // Notify other widgets of the changes
     notifyListeners();
   }
+
+  void updateProduct(String id, Product newProduct) {
+    // Find the index of the product so you can update it
+    final productIndex = _items.indexWhere((prod) => prod.id == id);
+    if (productIndex >= 0) {
+      _items[productIndex] = newProduct;
+    } else {
+      print('how did we get here?');
+    }
+
+    notifyListeners();
+  }
+
+  void deleteProduct(String id) {
+    _items.removeWhere((element) => element.id == id);
+    notifyListeners();
+  }
 }

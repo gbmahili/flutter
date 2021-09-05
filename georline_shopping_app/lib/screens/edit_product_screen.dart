@@ -16,18 +16,54 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlController = TextEditingController();
   final _imageUrlFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
+
+  // get product id from arguments
+
   var _editedProduct = Product(
-    id: '',
+    id: null,
     title: '',
     price: 0,
     description: '',
     imageUrl: '',
   );
 
+  var _initValues = {
+    'title': '',
+    'description': '',
+    'price': '',
+    'imageUrl': ''
+  };
+
+  var _isInit = true; // So didChangeDependencies does not run all the time
   @override
   void initState() {
     _imageUrlFocusNode.addListener(_updateImageUrl);
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      if (ModalRoute.of(context)!.settings.arguments != null) {
+        final String productId =
+            ModalRoute.of(context)!.settings.arguments as String;
+        if (productId.isNotEmpty && productId != null) {
+          // Get the product
+          _editedProduct = Provider.of<ProductsProvider>(context, listen: false)
+              .findById(productId);
+          _initValues = {
+            'title': _editedProduct.title,
+            'description': _editedProduct.description,
+            'price': _editedProduct.price.toString(),
+            // 'imageUrl': _editedProduct.imageUrl
+            'imageUrl': ''
+          };
+          _imageUrlController.text = _editedProduct.imageUrl;
+        }
+      }
+    }
+    _isInit = false;
+    super.didChangeDependencies();
   }
 
   void _updateImageUrl() {
@@ -53,9 +89,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
     // Save product data
     _form.currentState!.save();
-    // Add product to the data provider
-    Provider.of<ProductsProvider>(context, listen: false)
-        .addProduct(_editedProduct);
+    // Add product to the data provider if no id
+    if (_editedProduct.id != null) {
+      // We are editing
+      print(_editedProduct.id);
+      Provider.of<ProductsProvider>(context, listen: false)
+          .updateProduct(_editedProduct.id, _editedProduct);
+    } else {
+      // we are editing
+      Provider.of<ProductsProvider>(context, listen: false)
+          .addProduct(_editedProduct);
+    }
+
     Navigator.of(context).pop(); // go back
   }
 
@@ -91,6 +136,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
             child: Column(
               children: [
                 TextFormField(
+                  initialValue: _initValues['title'],
                   decoration: InputDecoration(labelText: 'Title'),
                   textInputAction: TextInputAction.next,
                   onFieldSubmitted: (_) {
@@ -108,7 +154,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   },
                   onSaved: (value) {
                     _editedProduct = Product(
-                        id: DateTime.now().toString(),
+                        id: _editedProduct.id,
+                        isFavorite: _editedProduct.isFavorite,
                         title: value as String,
                         price: _editedProduct.price,
                         description: _editedProduct.description,
@@ -116,6 +163,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   },
                 ),
                 TextFormField(
+                  initialValue: _initValues['price'],
                   decoration: InputDecoration(labelText: 'Price'),
                   keyboardType: TextInputType.number,
                   textInputAction: TextInputAction.next,
@@ -138,7 +186,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   },
                   onSaved: (value) {
                     _editedProduct = Product(
-                        id: DateTime.now().toString(),
+                        id: _editedProduct.id,
+                        isFavorite: _editedProduct.isFavorite,
                         title: _editedProduct.title,
                         price: double.parse(value as String),
                         description: _editedProduct.description,
@@ -146,6 +195,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   },
                 ),
                 TextFormField(
+                  initialValue: _initValues['description'],
                   decoration: InputDecoration(labelText: 'Description'),
                   maxLines: 3,
                   keyboardType: TextInputType.multiline,
@@ -161,7 +211,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   },
                   onSaved: (value) {
                     _editedProduct = Product(
-                        id: DateTime.now().toString(),
+                        id: _editedProduct.id,
+                        isFavorite: _editedProduct.isFavorite,
                         title: _editedProduct.title,
                         price: _editedProduct.price,
                         description: value as String,
@@ -194,6 +245,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     ),
                     Expanded(
                       child: TextFormField(
+                        // initialValue: _initValues['imageUrl'], // can't have this when there is a controller
                         decoration: InputDecoration(labelText: "Image URL"),
                         keyboardType: TextInputType.url,
                         textInputAction: TextInputAction.done,
@@ -220,7 +272,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         },
                         onSaved: (value) {
                           _editedProduct = Product(
-                            id: DateTime.now().toString(),
+                            id: _editedProduct.id,
+                            isFavorite: _editedProduct.isFavorite,
                             title: _editedProduct.title,
                             price: _editedProduct.price,
                             description: _editedProduct.description,

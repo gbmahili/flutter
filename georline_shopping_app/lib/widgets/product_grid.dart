@@ -28,9 +28,11 @@ class ProductGrid extends StatelessWidget {
       ),
       itemCount: products.length,
       itemBuilder: (context, index) {
-        return ChangeNotifierProvider(
-          create: (context) => products[
-              index], // this products[index] is a class that can notify of changes
+        return ChangeNotifierProvider.value(
+          value: products[
+              index], // use value since it is existing value: https://github.com/rrousselGit/provider/issues/168#issuecomment-514350353
+          // create: (context) => products[
+          //     index], // this products[index] is a class that can notify of changes
           child: ProductItem(
               // products[index].id,
               // products[index].title,
