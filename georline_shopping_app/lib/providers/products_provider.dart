@@ -71,7 +71,16 @@ class ProductsProvider with ChangeNotifier {
     return _items.firstWhere((p) => p.id == id);
   }
 
-  void addProduct() {
+  void addProduct(Product product) {
+    // Get data from product
+    final newProduct = Product(
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl,
+        id: DateTime.now().toString());
+    _items.add(newProduct); // adds the product at the end of the list
+    // _items.insert(0, newProduct); // adds the product at the begining of the list
     // Notify other widgets of the changes
     notifyListeners();
   }
