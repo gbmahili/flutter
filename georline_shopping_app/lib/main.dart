@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:georline_shopping_app/providers/cart.dart';
+import 'package:georline_shopping_app/providers/orders.dart';
 import 'package:georline_shopping_app/screens/cart_screen.dart';
+import 'package:georline_shopping_app/screens/order_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'package:georline_shopping_app/providers/products_provider.dart';
@@ -22,6 +24,7 @@ class MyApp extends StatelessWidget {
         // ChangeNotifierProvider.value(value: Cart()),
         ChangeNotifierProvider(create: (_) => ProductsProvider()),
         ChangeNotifierProvider(create: (_) => Cart()),
+        ChangeNotifierProvider(create: (_) => Orders()),
       ],
       // return ChangeNotifierProvider.value(
       //   // value: (context) =>
@@ -41,6 +44,7 @@ class MyApp extends StatelessWidget {
         routes: {
           ProductDetailScreen.routeName: (context) => ProductDetailScreen(),
           CartScreen.routeName: (context) => CartScreen(),
+          OrdersScreen.routeName: (context) => OrdersScreen(),
         },
       ),
     );

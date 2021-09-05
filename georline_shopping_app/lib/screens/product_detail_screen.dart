@@ -18,14 +18,35 @@ class ProductDetailScreen extends StatelessWidget {
     final selectedProduct = productProvider.findById(productId);
     // print(selectedProduct);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          selectedProduct.title,
+        appBar: AppBar(
+          title: Text(
+            selectedProduct.title,
+          ),
         ),
-      ),
-      body: Text(
-        selectedProduct.id,
-      ),
-    );
+        body: Container(
+          // height: 300,
+          width: double.infinity,
+          child: Column(
+            children: [
+              Card(
+                child:
+                    Image.network(selectedProduct.imageUrl, fit: BoxFit.cover),
+              ),
+              SizedBox(height: 10),
+              Text(
+                "\$${selectedProduct.price}",
+                style: TextStyle(fontSize: 20, color: Colors.grey),
+              ),
+              SizedBox(height: 10),
+              Text(
+                selectedProduct.description,
+                style: TextStyle(fontSize: 18),
+                softWrap: true,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+          margin: EdgeInsets.all(16),
+        ));
   }
 }
