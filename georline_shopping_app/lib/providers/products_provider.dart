@@ -1,4 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
 import 'package:georline_shopping_app/providers/product.dart';
 
 class ProductsProvider with ChangeNotifier {
@@ -42,6 +45,9 @@ class ProductsProvider with ChangeNotifier {
     ),
   ];
 
+  final String endPoint =
+      'https://georline-shopping-flutter-test-default-rtdb.firebaseio.com';
+
   // var _showFavoritesOnly = false;
 
   // We will return a copy of the items
@@ -71,18 +77,43 @@ class ProductsProvider with ChangeNotifier {
     return _items.firstWhere((p) => p.id == id);
   }
 
-  void addProduct(Product product) {
-    // Get data from product
-    final newProduct = Product(
+  Future<void> addProduct(Product product) {
+    // Save to db first: Using Firebase
+    final String productsCollection = '/products.json'; // .json for Firebase
+    final url = Uri.parse('${this.endPoint}/$productsCollection');
+    return http
+        .post(
+      url,
+      body: json.encode({
+        // json.encode comes from the dart:convert package
+        'title': product.title,
+        'description': product.description,
+        'price': product.price,
+        'imageUrl': product.imageUrl,
+        // 'id': DateTime.now().toString()
+        'isFavorite': product.isFavorite,
+      }),
+    )
+        .then((res) {
+      // decode the response and get the body from id
+      print(json.decode(res.body));
+      // id from firebase will come as name on the body object
+      final String newProductId = json.decode(res.body)['name'];
+      // Get data from product
+      final newProduct = Product(
         title: product.title,
         description: product.description,
         price: product.price,
         imageUrl: product.imageUrl,
-        id: DateTime.now().toString());
-    _items.add(newProduct); // adds the product at the end of the list
-    // _items.insert(0, newProduct); // adds the product at the begining of the list
-    // Notify other widgets of the changes
-    notifyListeners();
+        // id: DateTime.now().toString(),
+        id: newProductId,
+      );
+
+      _items.add(newProduct); // adds the product at the end of the list
+      // _items.insert(0, newProduct); // adds the product at the begining of the list
+      // Notify other widgets of the changes
+      notifyListeners();
+    });
   }
 
   void updateProduct(String id, Product newProduct) {
