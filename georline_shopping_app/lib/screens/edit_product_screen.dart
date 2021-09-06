@@ -81,7 +81,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
   }
 
-  void _saveForm() {
+  void _saveForm() async {
     // validate: triggers the validation on the Form
     final isValid = _form.currentState!
         .validate(); // called for each FormTextField that has a validator function
@@ -96,19 +96,39 @@ class _EditProductScreenState extends State<EditProductScreen> {
     // Add product to the data provider if no id
     if (_editedProduct.id != null) {
       // We are editing
-      print(_editedProduct.id);
+      // print(_editedProduct.id);
       Provider.of<ProductsProvider>(context, listen: false)
           .updateProduct(_editedProduct.id, _editedProduct);
     } else {
-      // we are editing
-      Provider.of<ProductsProvider>(context, listen: false)
-          .addProduct(_editedProduct)
-          .then((_) {
+      // we are adding
+      try {
+        await Provider.of<ProductsProvider>(context, listen: false)
+            .addProduct(_editedProduct);
+      } catch (error) {
+        await showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('An error occured!'),
+            content: Text('Something went wrong, plase try again.'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _isLoading = false;
+                    });
+                    Navigator.of(ctx).pop();
+                  },
+                  child: Text('Okay'))
+            ],
+          ),
+        );
+      } finally {
+        // will alwyas run even if there is an error in the catch
         setState(() {
           _isLoading = false;
         });
         Navigator.of(context).pop(); // go back
-      });
+      }
     }
   }
 

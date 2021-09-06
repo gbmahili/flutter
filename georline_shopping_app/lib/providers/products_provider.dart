@@ -77,24 +77,65 @@ class ProductsProvider with ChangeNotifier {
     return _items.firstWhere((p) => p.id == id);
   }
 
-  Future<void> addProduct(Product product) {
+  // Future<void> addProduct(Product product) {
+  //   // Save to db first: Using Firebase
+  //   final String productsCollection = '/products.json'; // .json for Firebase
+  //   final url = Uri.parse('${this.endPoint}/$productsCollection');
+  //   return http
+  //       .post(
+  //     url,
+  //     body: json.encode({
+  //       // json.encode comes from the dart:convert package
+  //       'title': product.title,
+  //       'description': product.description,
+  //       'price': product.price,
+  //       'imageUrl': product.imageUrl,
+  //       // 'id': DateTime.now().toString()
+  //       'isFavorite': product.isFavorite,
+  //     }),
+  //   )
+  //       .then((res) {
+  //     // decode the response and get the body from id
+  //     print(json.decode(res.body));
+  //     // id from firebase will come as name on the body object
+  //     final String newProductId = json.decode(res.body)['name'];
+  //     // Get data from product
+  //     final newProduct = Product(
+  //       title: product.title,
+  //       description: product.description,
+  //       price: product.price,
+  //       imageUrl: product.imageUrl,
+  //       // id: DateTime.now().toString(),
+  //       id: newProductId,
+  //     );
+
+  //     _items.add(newProduct); // adds the product at the end of the list
+  //     // _items.insert(0, newProduct); // adds the product at the begining of the list
+  //     // Notify other widgets of the changes
+  //     notifyListeners();
+  //   }).catchError((error) {
+  //     print(error); // Send to custom analytics servers
+  //     throw error; // this will be returned as a future
+  //   });
+  // }
+  Future<void> addProduct(Product product) async {
     // Save to db first: Using Firebase
     final String productsCollection = '/products.json'; // .json for Firebase
     final url = Uri.parse('${this.endPoint}/$productsCollection');
-    return http
-        .post(
-      url,
-      body: json.encode({
-        // json.encode comes from the dart:convert package
-        'title': product.title,
-        'description': product.description,
-        'price': product.price,
-        'imageUrl': product.imageUrl,
-        // 'id': DateTime.now().toString()
-        'isFavorite': product.isFavorite,
-      }),
-    )
-        .then((res) {
+    try {
+      final res = await http.post(
+        url,
+        body: json.encode({
+          // json.encode comes from the dart:convert package
+          'title': product.title,
+          'description': product.description,
+          'price': product.price,
+          'imageUrl': product.imageUrl,
+          // 'id': DateTime.now().toString()
+          'isFavorite': product.isFavorite,
+        }),
+      );
+
       // decode the response and get the body from id
       print(json.decode(res.body));
       // id from firebase will come as name on the body object
@@ -113,7 +154,10 @@ class ProductsProvider with ChangeNotifier {
       // _items.insert(0, newProduct); // adds the product at the begining of the list
       // Notify other widgets of the changes
       notifyListeners();
-    });
+    } catch (error) {
+      print(error); // Send to custom analytics servers
+      throw error; // this will be returned as a future
+    }
   }
 
   void updateProduct(String id, Product newProduct) {
