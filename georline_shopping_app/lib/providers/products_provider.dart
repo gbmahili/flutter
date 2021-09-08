@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:georline_shopping_app/models/http_exception.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:georline_shopping_app/providers/product.dart';
@@ -65,6 +66,7 @@ class ProductsProvider with ChangeNotifier {
 
     try {
       final response = await http.get(url);
+      if (json.decode(response.body) == null) return;
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
 
       // Loop through
@@ -189,10 +191,22 @@ class ProductsProvider with ChangeNotifier {
     }
   }
 
-  void updateProduct(String id, Product newProduct) {
+  Future<void> updateProduct(String id, Product newProduct) async {
     // Find the index of the product so you can update it
     final productIndex = _items.indexWhere((prod) => prod.id == id);
     if (productIndex >= 0) {
+      final String productsCollection =
+          '/products/$id.json'; // .json for Firebase
+      final url = Uri.parse('${this.endPoint}/$productsCollection');
+      await http.patch(
+        url,
+        body: json.encode({
+          'title': newProduct.title,
+          'description': newProduct.description,
+          'price': newProduct.price,
+          'imageUrl': newProduct.imageUrl,
+        }),
+      );
       _items[productIndex] = newProduct;
     } else {
       print('how did we get here?');
@@ -201,8 +215,29 @@ class ProductsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteProduct(String id) {
-    _items.removeWhere((element) => element.id == id);
+  Future<void> deleteProduct(String id) async {
+    final String productsCollection =
+        '/products/$id.json'; // .json for Firebase
+    final url = Uri.parse('${this.endPoint}/$productsCollection');
+
+    // Optimistic update: Try to remove item from the list then delete it from the database
+    // but keep a copy of the product so that, if it fails to delete from the DB, then you
+    // will still have a copy of the product and insert it back to the index where it was
+    final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
+    dynamic existingProduct = _items[existingProductIndex];
+    _items.removeAt(existingProductIndex);
     notifyListeners();
+
+    // _items.removeWhere((element) => element.id == id);
+    final response = await http.delete(url);
+    // the http.delete does not return an error if one exists...but will return an http status code
+    // So we need to write our own exception message if status code is greater than or equal to 400
+    if (response.statusCode >= 400) {
+      _items.insert(existingProductIndex, existingProduct);
+      notifyListeners();
+      print(response.statusCode);
+      throw HttpException('There was an error while deleting this product');
+    }
+    existingProduct = null;
   }
 }

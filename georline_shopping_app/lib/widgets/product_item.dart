@@ -18,6 +18,7 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scaffoldMessanger = ScaffoldMessenger.of(context);
     final product = Provider.of<Product>(
       context,
       // if this is false, we can't see changes when we favorite the item, default is true, so we don't have to set it to true
@@ -73,7 +74,9 @@ class ProductItem extends StatelessWidget {
                   color: Theme.of(context).accentColor,
                 ),
                 onPressed: () {
-                  product.toggleFavoriteStatus();
+                  product.toggleFavoriteStatus().catchError((e) =>
+                      scaffoldMessanger
+                          .showSnackBar(SnackBar(content: Text(e.toString()))));
                 },
               ),
             ),
